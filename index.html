@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposito de bebidas Santa Cruz</title> 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css"> 
+</head>
+<body>
+    <header>
+        <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fas fa-bars"></label>
+        
+        <img src="../img/logo.png" alt="Santa Cruz" style="height: 60px">
+
+        <nav class="navbar">
+            <a href="index.html">home</a>
+            <a href="sobrenos.html">sobre nós</a>
+            <a href="locacoes.html">locações</a>
+            <a href="bebidas.html">bebidas</a>
+            <a href="kits.html">kits</a>
+            <a href="contato.html">contato</a>
+            <a href="avaliacao.html">avaliações</a>
+        </nav>
+
+        <div class="icons">
+            <span id="user-greeting" style="font-size: 1.5rem; color: #c11111; margin-right: 10px;"></span>
+            
+            <a href="favoritos.html" class="fas fa-heart"></a>
+            <a href="carrinho.html" class="fas fa-shopping-cart"></a>
+            
+            <a href="login.html" id="login-icon" class="fa-solid fa-user"></a>
+            
+            <a href="#" id="logout-btn" class="fas fa-sign-out-alt" style="display:none; color: #c11111; margin-left: 10px;"></a>
+        </div>
+    </header>
+
+    <section class="home" id="home">
+        <div class="content">
+            <h3>Bem vindo ao depósito de bebidas Santa Cruz</h3>
+            <span>bebidas, tendas, mesas & cadeiras </span>
+            <p>oferecemos produtos de qualidade para tornar seu evento inesquecível.</p>
+            <a href="bebidas.html" class="btn">Compre ou alugue aqui</a>
+        </div>
+    </section>
+
+    <section class="icons-container">
+        <div class="icons">
+            <img src="../img/icon1.png" alt="">
+            <div class="info">
+                <h3>Entrega rápida</h3>
+                <span>entrega rápida e eficiente.</span>
+            </div>
+        </div>
+
+        <div class="icons">
+            <img src="../img/icon2.png" alt="">
+            <div class="info">
+                <h3>Segurança</h3>
+                <span>pagamento seguro.</span>
+            </div>
+        </div>
+
+        <div class="icons">
+            <img src="../img/icon3.png" alt="">
+            <div class="info">
+                <h3>Qualidade</h3>
+                <span>melhor qualidade do mercado.</span>
+            </div>
+        </div>
+
+        <div class="icons">
+            <img src="../img/icon4.png" alt="">
+            <div class="info">
+                <h3>Atendimento</h3>
+                <span>atendimento para dúvidas.</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function gerenciarSessao() {
+            const nome = localStorage.getItem('userName');
+            const greeting = document.getElementById('user-greeting');
+            const loginIcon = document.getElementById('login-icon');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (nome) {
+                // Se estiver logado: mostra "Olá, PrimeiroNome", esconde ícone de login e mostra logout
+                const primeiroNome = nome.split(' ')[0];
+                greeting.innerText = `Olá, ${primeiroNome}`;
+                greeting.style.fontFamily = "'Poppins', sans-serif";
+                loginIcon.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+            } else {
+                // Se não estiver logado: limpa saudação e mostra ícone de login
+                greeting.innerText = '';
+                loginIcon.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // Função para o botão de Logout
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if(confirm("Deseja realmente encerrar a sessão?")) {
+                localStorage.clear(); // Remove email e nome
+                window.location.reload(); // Recarrega para atualizar o header
+            }
+        });
+
+        // Executa ao carregar a página
+        window.onload = gerenciarSessao;
+    </script>
+</body>
+</html>

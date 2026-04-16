@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - Depósito Santa Cruz</title> 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/avaliacao.css"> 
+</head>
+
+<body>
+
+<header>
+    <input type="checkbox" id="toggler">
+    <label for="toggler" class="fas fa-bars"></label>
+
+    <img src="img/logo.png" alt="Santa Cruz" style="height: 60px">
+
+    <nav class="navbar">
+        <a href="../html/index.html">home</a>
+        <a href="../html/sobrenos.html">sobre nós</a>
+        <a href="../html/locacoes.html">locações</a>
+        <a href="../html/bebidas.html">bebidas</a>
+        <a href="../html/kits.html">kits</a>
+        <a href="../html/contato.html">contato</a>
+        <a href="../html/avaliacao.html">avaliações</a>
+    </nav>
+
+    <div class="icons">
+        <span id="user-greeting" style="font-size: 1.5rem; color: #c11111; margin-right: 10px;"></span>
+        
+        <a href="favoritos.html" class="fas fa-heart"></a>
+        <a href="carrinho.html" class="fas fa-shopping-cart"></a>
+        
+        <a href="login.html" id="login-icon" class="fa-solid fa-user"></a>
+        
+        <a href="#" id="logout-btn" class="fas fa-sign-out-alt" style="display:none; color: #c11111; margin-left: 10px;"></a>
+    </div>
+</header>
+
+<section class="avaliacoes" id="avaliacoes">
+
+    <h1 class="heading">Avaliações <span>clientes</span></h1>
+
+    <section class="avaliacoes-form">
+        <form onsubmit="adicionarAvaliacao(event)">
+            <input type="text" id="nome" placeholder="seu nome" class="box">
+            <textarea id="comentario" placeholder="sua avaliação" class="box"></textarea>
+            <div class="estrelas-avaliacao">
+                <input type="radio" id="estrela5" name="avaliacao" value="5">
+                <label for="estrela5" title="5 estrelas">&#9733;</label>
+                
+                <input type="radio" id="estrela4" name="avaliacao" value="4">
+                <label for="estrela4" title="4 estrelas">&#9733;</label>
+                
+                <input type="radio" id="estrela3" name="avaliacao" value="3">
+                <label for="estrela3" title="3 estrelas">&#9733;</label>
+                
+                <input type="radio" id="estrela2" name="avaliacao" value="2">
+                <label for="estrela2" title="2 estrelas">&#9733;</label>
+                
+                <input type="radio" id="estrela1" name="avaliacao" value="1" required>
+                <label for="estrela1" title="1 estrela">&#9733;</label>
+            </div>
+            <input type="submit" value="enviar avaliação" class="btn">
+        </form>
+        <div id="lista-avaliacoes"></div>
+    </section>
+
+    <div class="box-container">
+        <div class="box">
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p>Atendimento excepcional!!! Produtos de qualidade e equipe altamente qualificada...</p>
+            <div class="user">
+                <div class="user-info">
+                    <h3>Adilson Meneghetti</h3>
+                    <span>cliente</span>
+                </div>
+            </div>
+            <span class="fa-solid fa-quote-right"></span>
+        </div>
+
+        <div class="box">
+            <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <p>Somos clientes a quase 10 anos, sempre sendo muito bem atendidos e sempre com preço justo. Só elogios!</p>
+            <div class="user">
+                <div class="user-info">
+                    <h3>Jean Andrade</h3>
+                    <span>cliente</span>
+                </div>
+            </div>
+            <span class="fa-solid fa-quote-right"></span>
+        </div>
+    </div>
+</section>
+
+<script src="/script/avaliacao.js"></script>
+<script>
+    // Lógica para o cabeçalho
+    function gerenciarHeader() {
+        const nome = localStorage.getItem('userName');
+        const greeting = document.getElementById('user-greeting');
+        const loginIcon = document.getElementById('login-icon');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (nome) {
+            greeting.innerText = `Olá, ${nome.split(' ')[0]}`;
+            greeting.style.fontFamily = "'Poppins', sans-serif";
+            loginIcon.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
+            
+            // Preenche o campo nome da avaliação automaticamente se estiver logado
+            if(document.getElementById('nome')) {
+                document.getElementById('nome').value = nome;
+            }
+        } else {
+            greeting.innerText = '';
+            loginIcon.style.display = 'inline-block';
+            logoutBtn.style.display = 'none';
+        }
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if(confirm("Deseja realmente sair?")) {
+            localStorage.clear();
+            window.location.reload();
+        }
+    });
+
+    window.addEventListener('load', gerenciarHeader);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - Santa Cruz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css"> 
+    <style>
+        /* Estilos copiados do carrinho para garantir a igualdade */
+        body { background-color: #f9f9f9; min-height: 100vh; }
+        .cart-container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .cart-item { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 1.5rem; 
+            background: #fff; 
+            margin-bottom: 1rem; 
+            border-radius: .5rem; 
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.05); 
+        }
+        .cart-item img { height: 80px; width: 80px; object-fit: contain; }
+        .cart-info { flex: 1; margin-left: 2rem; }
+        .cart-info h3 { font-size: 1.8rem; color: #333; margin-bottom: .5rem; }
+        .cart-info span { font-size: 1.5rem; color: #e84393; font-weight: bold; }
+        .empty-msg { font-size: 2rem; text-align: center; color: #666; margin-top: 5rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <input type="checkbox" name="" id="toggler">
+    <label for="toggler" class="fas fa-bars"></label>
+
+    <img src="../img/logo.png" alt="Santa Cruz" style="height: 60px">
+    
+    <nav class="navbar">
+        <a href="index.html">home</a>
+        <a href="bebidas.html">bebidas</a>
+        <a href="favoritos.html">favoritos</a>
+        <a href="carrinho.html">carrinho</a>
+    </nav>
+
+    <div class="icons">
+        <span id="user-greeting" style="font-size: 1.5rem; color: #c11111; margin-right: 10px;"></span>
+        <a href="favoritos.html" class="fas fa-heart"></a>
+        <a href="carrinho.html" class="fas fa-shopping-cart"></a>
+        <a href="login.html" id="login-icon" class="fa-solid fa-user"></a>
+        <a href="#" id="logout-btn" class="fas fa-sign-out-alt" style="display:none; color: #c11111; margin-left: 10px;"></a>
+    </div>
+</header>
+
+<section class="cart-container">
+    <h1 class="heading" style="font-size: 3rem; text-align: center; margin-bottom: 3rem;"> 
+        <span>Meus Favoritos</span> 
+    </h1>
+
+    <div id="favorites-list">
+        <p class="empty-msg">Carregando seus favoritos...</p>
+    </div>
+</section>
+
+<script>
+// 1. Gerenciar Cabeçalho
+function gerenciarHeader() {
+    const nome = localStorage.getItem('userName');
+    const greeting = document.getElementById('user-greeting');
+    const loginIcon = document.getElementById('login-icon');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (nome) {
+        greeting.innerText = `Olá, ${nome.split(' ')[0]}`;
+        greeting.style.fontFamily = "'Poppins', sans-serif";
+        loginIcon.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+    } else {
+        greeting.innerText = '';
+        loginIcon.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+    }
+}
+
+// 2. Função para remover favorito (Usa o mesmo toggle do banco)
+async function removerFavorito(nomeProduto) {
+    const email = localStorage.getItem('userEmail');
+    if (!confirm(`Remover ${nomeProduto} dos favoritos?`)) return;
+
+    try {
+        const response = await fetch('/.netlify/functions/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                type: 'toggle_favorite', 
+                email: email, 
+                nome: nomeProduto 
+            })
+        });
+
+        if (response.ok) {
+            carregarFavoritos(); // Recarrega a lista
+        }
+    } catch (error) {
+        console.error("Erro ao remover favorito:", error);
+    }
+}
+
+// 3. Carregar Favoritos
+async function carregarFavoritos() {
+    const email = localStorage.getItem('userEmail');
+    const list = document.getElementById('favorites-list');
+    
+    if (!email) {
+        list.innerHTML = `<div class="empty-msg"><p>Logue para ver seus favoritos.</p></div>`;
+        return;
+    }
+
+    try {
+        const response = await fetch('/.netlify/functions/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'get_favorites', email: email })
+        });
+
+        const itens = await response.json();
+
+        if (!itens || itens.length === 0) {
+            list.innerHTML = '<p class="empty-msg">Você ainda não tem favoritos ❤️</p>';
+            return;
+        }
+
+        list.innerHTML = '';
+        itens.forEach(item => {
+            const preco = parseFloat(item.price) || 0;
+
+            list.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.image_url}" alt="${item.product_name}">
+                    <div class="cart-info">
+                        <h3>${item.product_name}</h3>
+                        <span>R$ ${preco.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <i class="fas fa-trash" style="font-size: 2rem; cursor: pointer; color: #ff0000;" 
+                       onclick="removerFavorito('${item.product_name}')"></i>
+                </div>`;
+        });
+
+    } catch (error) {
+        console.error(error);
+        list.innerHTML = '<p style="color:red; text-align:center;">Erro ao carregar favoritos.</p>';
+    }
+}
+
+// Logout
+document.getElementById('logout-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    if(confirm("Deseja realmente sair?")) {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    }
+});
+
+window.onload = () => {
+    gerenciarHeader();
+    carregarFavoritos();
+};
+</script>
+
+</body>
+</html>
